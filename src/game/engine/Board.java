@@ -74,12 +74,13 @@ public class Board {
 	
 	private void setCardsByRarity() {
 		ArrayList<Card> ans=new ArrayList<Card>();
-		for(int i=0; i<this.originalCards.size();i++) {
+		for(int i=0; i<originalCards.size();i++) {
 
 			for(int j=0;j<originalCards.get(i).getRarity();j++) {
 				ans.add(originalCards.get(i).GetCopy());
 			}
 		}
+		originalCards=ans;
 		
 	}
 	

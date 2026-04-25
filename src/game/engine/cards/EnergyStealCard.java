@@ -27,5 +27,10 @@ public class EnergyStealCard extends Card implements CanisterModifier {
 		
 		
 	}
+
+	@Override
+	public Card GetCopy() {
+		return new EnergyStealCard(this.getName(),this.getDescription(),this.getRarity(),this.getEnergy());
+	}
 	
 }
