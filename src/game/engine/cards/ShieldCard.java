@@ -1,0 +1,26 @@
+package game.engine.cards;
+
+import game.engine.monsters.Monster;
+
+public class ShieldCard extends Card {
+	
+	public ShieldCard(String name, String description, int rarity) {
+		super(name, description, rarity, true); 
+	}
+
+	
+	// draz part
+	
+	@Override
+	public void performAction(Monster player, Monster opponent) {
+		player.setShielded(true);
+		opponent.setShielded(false);
+		
+	}
+	
+	@Override
+	public Card GetCopy() {
+		return new ShieldCard(this.getName(),this.getDescription(),this.getRarity());
+	}
+
+}
