@@ -14,16 +14,22 @@ public class EnergyStealCard extends Card implements CanisterModifier {
 		return energy;
 	}
 
-	// my part !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! unfinished !!!!!!!!!!!!!!!!!!!!!!
+	// my part !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! unfinished !!!!!!!!!!!!!!!!!!!!!! not sure ok the fuck is canister energy ????
 	
 	@Override
 	public void modifyCanisterEnergy(Monster monster, int canisterValue) {
-		// TODO Auto-generated method stub
-		
+		monster.alterEnergy(canisterValue);	
 	}
 
 	@Override
 	public void performAction(Monster player, Monster opponent) {
+		int initial_opponent_energy=opponent.getEnergy();
+		this.modifyCanisterEnergy(opponent,-this.energy);
+		
+		int new_opponent_energy=opponent.getEnergy();
+		int amount_stolen=initial_opponent_energy-new_opponent_energy;
+		
+		this.modifyCanisterEnergy(player, amount_stolen);
 		
 		
 	}
