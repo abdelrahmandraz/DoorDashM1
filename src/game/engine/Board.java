@@ -1,9 +1,10 @@
 package game.engine;
 
 import java.util.ArrayList;
-
+import java.util.Collections;
 import game.engine.cards.Card;
 import game.engine.cells.*;
+import game.engine.exceptions.*;
 import game.engine.monsters.Monster;
 
 public class Board {
@@ -11,12 +12,20 @@ public class Board {
 	private static ArrayList<Monster> stationedMonsters; 
 	private static ArrayList<Card> originalCards;
 	public static ArrayList<Card> cards;
+	//private static Board instance; // added this to be able to use the conveyer cell
 	
+	/*public static Board getInstance() {
+		return instance;
+	}*/
+
 	public Board(ArrayList<Card> readCards) {
 		this.boardCells = new Cell[Constants.BOARD_ROWS][Constants.BOARD_COLS];
 		stationedMonsters = new ArrayList<Monster>();
 		originalCards = readCards;
+		this.setCardsByRarity();
+		
 		cards = new ArrayList<Card>();
+		reloadCards();
 	}
 	
 	public Cell[][] getBoardCells() {
@@ -43,7 +52,7 @@ public class Board {
 		Board.cards = cards;
 	}
 	
-	// my code 
+	// deraz 
 	
 	private int[] indexToRowCol(int index) {
 		if(index>99 || index<0) {
@@ -83,6 +92,53 @@ public class Board {
 		originalCards=ans;
 		
 	}
+	
+	public static void reloadCards() {
+		Collections.shuffle(originalCards);
+		for (int i=0;i<getOriginalCards().size();i++) {
+			cards.add(originalCards.get(i));
+		}
+	}
+	
+	public static Card drawCard() {
+		if(cards.isEmpty())
+			reloadCards();
+		
+		return cards.remove(0);	
+	}
+	
+	
+	public  void moveMonster(Monster currentMonster, int roll, Monster opponentMonster) throws InvalidMoveException{
+		if(currentMonster.isFrozen()) {
+			currentMonster.setFrozen(false);
+			return;								//still working on it !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		}
+		
+		int original_position=currentMonster.getPosition();
+		int startEnergy = currentMonster.getEnergy();
+		
+		
+		currentMonster.move(roll);
+		Cell currentCell=getCell(currentMonster.getPosition());
+		currentCell.transport(currentMonster);
+		
+		if(currentMonster.getPosition()==opponentMonster.getPosition()) {
+			currentMonster.setPosition(original_position);
+			currentMonster.setEnergy(startEnergy);
+			throw new InvalidMoveException("cell already occupied");
+		}
+		
+		currentCell=getCell(currentMonster.getPosition());
+		currentCell.onLand(currentMonster, opponentMonster);
+		
+		
+	}
+	
+	
+	
+	
+	
+	
 	
 		
 

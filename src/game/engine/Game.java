@@ -3,9 +3,13 @@ package game.engine;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
+import game.engine.exceptions.*;
+import game.engine.monsters.*;
 
 import game.engine.dataloader.DataLoader;
 import game.engine.monsters.*;
+
 
 public class Game {
 	private Board board;
@@ -14,11 +18,11 @@ public class Game {
 	private Monster opponent;
 	private Monster current;
 	private static Game instance; // added this to be able to implement the schemer
+	
 	public Game(Role playerRole) throws IOException {
+		
 		this.board = new Board(DataLoader.readCards());
-		
 		this.allMonsters = DataLoader.readMonsters();
-		
 		this.player = selectRandomMonsterByRole(playerRole);
 		this.opponent = selectRandomMonsterByRole(playerRole == Role.SCARER ? Role.LAUGHER : Role.SCARER);
 		this.current = player;
@@ -60,5 +64,49 @@ public class Game {
 	    		.findFirst()
 	    		.orElse(null);
 	}
+	
+	// andrew
+	
+	private Monster getCurrentOpponent() {
+        return getOpponent();
+    }
+    
+    private int rollDice() {
+        Random rand = new Random();
+        return rand.nextInt(6)+1;
+    }
+    
+    void usePowerup() throws OutOfEnergyException {
+        int energy = getCurrent().getEnergy();
+        int cost = Constants.POWERUP_COST;
+        if (energy >= cost)
+        	getCurrent().executePowerupEffect(opponent);
+        else throw new OutOfEnergyException("insufficent energy");
+        
+    }
+    
+    void playTurn() throws InvalidMoveException {
+        if (!getCurrent().isFrozen()) {
+            int roll = rollDice();
+            board.moveMonster(getCurrent(), roll, getOpponent()); // shouldnt we deal with the invalid move by re throwing the dice ??
+        }														//  also you have to check each turn the winnig condition 
+        switchTurn();
+    }
+    
+    private boolean checkWinCondition(Monster monster) {
+        if ((monster.getPosition() == Constants.WINNING_POSITION) && (monster.getEnergy() >= Constants.WINNING_ENERGY))
+            return true;
+        return false;
+    }
+    
+    Monster getWinner() {
+        if (checkWinCondition(getCurrent()))
+            return getCurrent();
+        return null;
+    }
+    
+    private void switchTurn() {
+        setCurrent(getOpponent());
+    }
 	
 }
