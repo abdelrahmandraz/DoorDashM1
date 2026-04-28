@@ -90,7 +90,8 @@ public class Game {
         if (!getCurrent().isFrozen()) {
             int roll = rollDice();
             board.moveMonster(getCurrent(), roll, getOpponent()); // shouldnt we deal with the invalid move by re throwing the dice ??
-        }														//  also you have to check each turn the winnig condition 
+        }														//  also you have to check each turn the winnig condition
+		else getCurrent().setFrozen(false);
         switchTurn();
     }
     
