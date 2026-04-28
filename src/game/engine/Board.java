@@ -109,18 +109,20 @@ public class Board {
 	
 	
 	public  void moveMonster(Monster currentMonster, int roll, Monster opponentMonster) throws InvalidMoveException{
-		if(currentMonster.isFrozen()) {
+		/*if(currentMonster.isFrozen()) {
 			currentMonster.setFrozen(false);
 			return;								//still working on it !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		}
+		}*/
 		
 		int original_position=currentMonster.getPosition();
 		int startEnergy = currentMonster.getEnergy();
+		boolean currentWasConfused = currentMonster.isConfused();
+	    boolean opponentWasConfused = opponentMonster.isConfused();
 		
 		
 		currentMonster.move(roll);
 		Cell currentCell=getCell(currentMonster.getPosition());
-		currentCell.transport(currentMonster);
+		currentCell.onLand(currentMonster, opponentMonster);
 		
 		if(currentMonster.getPosition()==opponentMonster.getPosition()) {
 			currentMonster.setPosition(original_position);
@@ -128,13 +130,29 @@ public class Board {
 			throw new InvalidMoveException("cell already occupied");
 		}
 		
-		currentCell=getCell(currentMonster.getPosition());
-		currentCell.onLand(currentMonster, opponentMonster);
+		if (currentWasConfused) currentMonster.decrementConfusion();
+	    if (opponentWasConfused) opponentMonster.decrementConfusion();
 		
-		
+	    updateMonsterPositions(currentMonster,opponentMonster);
 	}
 	
-	
+	private void updateMonsterPositions(Monster player, Monster opponent) {
+		for(int i=0;i<boardCells.length;i++) {
+			for (int j=0;j<boardCells.length;j++) {
+				boardCells[i][j].setMonster(null);
+				
+			}
+		}
+		
+		
+		for (Monster stationed : stationedMonsters) {
+	        getCell(stationed.getPosition()).setMonster(stationed);
+	    }
+		
+		getCell(player.getPosition()).setMonster(player);
+		getCell(opponent.getPosition()).setMonster(opponent);
+		
+	}
 	
 	
 	
