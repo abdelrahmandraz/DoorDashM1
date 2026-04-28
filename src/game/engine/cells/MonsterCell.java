@@ -13,5 +13,21 @@ public class MonsterCell extends Cell {
 	public Monster getCellMonster() {
 		return cellMonster;
 	}
-
+	public void onLand(Monster landingMonster, Monster opponentMonster){
+		super.onLand(landingMonster, opponentMonster);
+		if(this.getCellMonster().getRole()==landingMonster.getRole()){
+			landingMonster.executePowerupEffect(opponentMonster);
+		}else{
+			if(landingMonster.getEnergy()>this.getCellMonster().getEnergy()){
+				if(landingMonster.isShielded()){
+					this.getCellMonster().setEnergy(landingMonster.getEnergy());
+					landingMonster.setShielded(false);
+				}else{
+					int cellMonstersEnergy = this.getCellMonster().getEnergy();
+					this.getCellMonster().setEnergy(landingMonster.getEnergy());
+					landingMonster.setEnergy(cellMonstersEnergy);
+				}
+			}
+		}
+	}
 }

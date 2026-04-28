@@ -28,5 +28,12 @@ public class ContaminationSock extends TransportCell implements CanisterModifier
 	}
 	
 	
+	@Override
+	public void onLand(Monster landingMonster, Monster opponentMonster) {
+		super.onLand(landingMonster, opponentMonster);
+		this.transport(landingMonster);
+	}
+	
+	
 }
 
