@@ -18,7 +18,7 @@ public class Game {
 	private Monster opponent;
 	private Monster current;
 	private static Game instance; // added this to be able to implement the schemer
-	
+	private final Random rand = new Random();
 	public Game(Role playerRole) throws IOException {
 		
 		this.board = new Board(DataLoader.readCards());
@@ -72,16 +72,17 @@ public class Game {
     }
     
     private int rollDice() {
-        Random rand = new Random();
         return rand.nextInt(6)+1;
     }
     
     void usePowerup() throws OutOfEnergyException {
         int energy = getCurrent().getEnergy();
         int cost = Constants.POWERUP_COST;
-        if (energy >= cost)
-        	getCurrent().executePowerupEffect(opponent);
-        else throw new OutOfEnergyException("insufficent energy");
+        if (energy >= cost){
+			getCurrent().executePowerupEffect(opponent);
+			getCurrent().setEnergy(energy-cost);
+		}
+        else throw new OutOfEnergyException("insufficient monster energy");
         
     }
     
@@ -94,19 +95,21 @@ public class Game {
     }
     
     private boolean checkWinCondition(Monster monster) {
-        if ((monster.getPosition() == Constants.WINNING_POSITION) && (monster.getEnergy() >= Constants.WINNING_ENERGY))
-            return true;
-        return false;
+        return (monster.getPosition() == Constants.WINNING_POSITION) && (monster.getEnergy() >= Constants.WINNING_ENERGY);
     }
     
-    Monster getWinner() {
-        if (checkWinCondition(getCurrent()))
-            return getCurrent();
+    public Monster getWinner() {
+        if (checkWinCondition(getCurrent())){
+
+			System.out.println("The winner (of team " + getCurrent().getRole() + ") : \" " + getCurrent().getName() + "\" takes it all " +
+					"! \n" + getOpponent().getName() + " has to fall (u suck!!)");
+			return getCurrent();
+		}
         return null;
     }
     
     private void switchTurn() {
-        setCurrent(getOpponent());
+        setCurrent((getCurrent()==getOpponent())? getPlayer() : getOpponent());
     }
 	
 }
