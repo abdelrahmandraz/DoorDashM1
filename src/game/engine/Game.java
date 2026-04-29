@@ -18,7 +18,10 @@ public class Game {
 	private Monster opponent;
 	private Monster current;
 	private static Game instance; // added this to be able to implement the schemer
+	
 	private final Random rand = new Random();
+	
+	
 	public Game(Role playerRole) throws IOException {
 		
 		this.board = new Board(DataLoader.readCards());
@@ -86,8 +89,8 @@ public class Game {
         
     }
     
-    void playTurn() throws InvalidMoveException {
-        if (!getCurrent().isFrozen()) {
+    void playTurn() throws InvalidMoveException { 
+    	if (!getCurrent().isFrozen()) {
             int roll = rollDice();
             board.moveMonster(getCurrent(), roll, getOpponent()); // shouldnt we deal with the invalid move by re throwing the dice ??
         }														//  also you have to check each turn the winnig condition 
@@ -111,5 +114,7 @@ public class Game {
     private void switchTurn() {
         setCurrent((getCurrent()==getOpponent())? getPlayer() : getOpponent());
     }
+    
+    
 	
 }
