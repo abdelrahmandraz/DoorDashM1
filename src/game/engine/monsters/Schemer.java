@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import game.engine.Constants;
 
 import game.engine.Role;
-import game.engine.Game;
+import game.engine.Board;
 
 public class Schemer extends Monster {
 	
@@ -15,16 +15,26 @@ public class Schemer extends Monster {
 
     @Override
     public void executePowerupEffect(Monster opponentMonster) {
-        int totalStolen = 0;
-        ArrayList<Monster> monsters = Game.getInstance().getAllMonsters();
+        // 1. Start with your current energy (e.g., 20)
+        int totalEnergy = this.getEnergy();
+        ArrayList<Monster> monsters = Board.getStationedMonsters();
 
-        for (Monster m : monsters) {
-            // Steal from others, respecting their shields
-            totalStolen += this.stealEnergyFrom(m);
+        // 2. Steal from the list
+        if (monsters != null) {
+            for (Monster m : monsters) {
+                totalEnergy += this.stealEnergyFrom(m);
+               // System.out.println("Current total energy: " + totalEnergy); // Debug
+            }
         }
 
-        // Using alterEnergy triggers the +10 passive automatically
-        this.alterEnergy(totalStolen);
+        // 3. Steal from the opponent
+        if (opponentMonster != null) {
+            totalEnergy += this.stealEnergyFrom(opponentMonster);
+          //  System.out.println("Energy after opponent steal: " + totalEnergy);
+        }
+
+        // 4. Update the Schemer
+        this.setEnergy(totalEnergy);
     }
 
     @Override
@@ -32,26 +42,38 @@ public class Schemer extends Monster {
         int currentEnergy = this.getEnergy();
         int requestedChange = newEnergy - currentEnergy;
 
-        if (requestedChange != 0) {
-            // Apply passive: Change + SCHEMER_STEAL 
-            int finalEnergy = currentEnergy + requestedChange + Constants.SCHEMER_STEAL;
-            
-            // Call super to handle the Math.max(Constants.MIN_ENERGY, energy) logic
+       // if (requestedChange != 0) {
+            // 2. newEnergy already represents (currentEnergy + requestedChange)
+            int finalEnergy = newEnergy + Constants.SCHEMER_STEAL;
+
+           // System.out.println("Applying passive: " + newEnergy + " + 10 = " + finalEnergy);
+
             super.setEnergy(finalEnergy);
-        }
+        //}
+
     }
 
+
     private int stealEnergyFrom(Monster target) {
-        if (target != this) {
-            int energyBefore = target.getEnergy();
-            
-            // ALWAYS use alterEnergy for the victim to respect their shield
-            target.alterEnergy(-Constants.SCHEMER_STEAL);
-            
-            // Calculate actual energy lost (will be 0 if victim was shielded)
-            return energyBefore - target.getEnergy();
+        if (target == null || target == this) return 0;
+
+        int energyBefore = target.getEnergy();
+
+        // Check if the monster is shielded BEFORE you try to steal
+        if (target.isShielded()) {
+            target.setShielded(false); // Shield breaks
+            return 0; // You stole nothing
         }
-        return 0;
+
+        // Determine how much you CAN steal (cannot take more than they have)
+        int amountToSteal = Math.min(Constants.SCHEMER_STEAL, energyBefore);
+
+        // This triggers the victim's passive (like MultiTasker's +200)
+        target.setEnergy(energyBefore - amountToSteal);
+
+        // You return the amount you actually took,
+        // NOT the difference in their final energy.
+        return amountToSteal;
     }
 	
 	
