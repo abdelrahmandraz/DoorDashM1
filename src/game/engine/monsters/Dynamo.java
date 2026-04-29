@@ -10,13 +10,8 @@ public class Dynamo extends Monster {
 
 	@Override
 	public void executePowerupEffect(Monster opponentMonster) {
-		
-		try{
-			opponentMonster.setFrozen(true);
-		}
-		catch(NullPointerException e){
-			System.err.println("Error: Dynamo instance is null.");
-		}
+
+		opponentMonster.setFrozen(true);
 	}
 	
 	@Override

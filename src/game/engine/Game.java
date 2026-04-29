@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Random;
 import game.engine.exceptions.*;
 import game.engine.monsters.*;
+import game.engine.Board;
 
 import game.engine.dataloader.DataLoader;
 import game.engine.monsters.*;
@@ -29,6 +30,7 @@ public class Game {
 		this.player = selectRandomMonsterByRole(playerRole);
 		this.opponent = selectRandomMonsterByRole(playerRole == Role.SCARER ? Role.LAUGHER : Role.SCARER);
 		this.current = player;
+		
 		instance = this;// added this to be able to implement the schemer
 	}
 	

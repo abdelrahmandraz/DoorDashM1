@@ -19,18 +19,11 @@ public class MultiTasker extends Monster {
 	public void setNormalSpeedTurns(int normalSpeedTurns) {
 		this.normalSpeedTurns = normalSpeedTurns;
 	}
-	
-	@Override
-    public void executePowerupEffect(Monster opponentMonster) {
-        try {
-            // Focus Mode lasts for 2 turns according to the table.
-            this.setNormalSpeedTurns(this.getNormalSpeedTurns()+2);
-            
-        } catch (NullPointerException e) {
-           
-            System.err.println("Error: MultiTasker instance is null.");
-        }
 
+	@Override
+	public void executePowerupEffect(Monster opponentMonster) {
+		// Focus Mode lasts for 2 turns according to the table.
+		this.setNormalSpeedTurns(this.getNormalSpeedTurns() + 2);
 	}
 	
 	@Override 

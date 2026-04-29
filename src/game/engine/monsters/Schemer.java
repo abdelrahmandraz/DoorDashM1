@@ -13,23 +13,18 @@ public class Schemer extends Monster {
 		super(name, description, role, energy);
 	}
 
-	@Override
+    @Override
     public void executePowerupEffect(Monster opponentMonster) {
-        try {
-            int totalStolen = 0;
-            ArrayList<Monster> monsters = Game.getInstance().getAllMonsters();
+        int totalStolen = 0;
+        ArrayList<Monster> monsters = Game.getInstance().getAllMonsters();
 
-            for (Monster m : monsters) {
-                // Steal from others, respecting their shields
-                totalStolen += this.stealEnergyFrom(m);
-            }
-
-            // Using alterEnergy triggers the +10 passive automatically
-            this.alterEnergy(totalStolen);
-
-        } catch (NullPointerException e) {
-            System.err.println("Chain Attack failed: Monster list is missing.");
+        for (Monster m : monsters) {
+            // Steal from others, respecting their shields
+            totalStolen += this.stealEnergyFrom(m);
         }
+
+        // Using alterEnergy triggers the +10 passive automatically
+        this.alterEnergy(totalStolen);
     }
 
     @Override

@@ -20,12 +20,7 @@ public class Dasher extends Monster {
 
 	@Override
 	public void executePowerupEffect(Monster opponentMonster) {
-		try{ 
-			this.setMomentumTurns(this.getMomentumTurns()+3);
-		}	
-		catch(NullPointerException e){
-			System.err.println("Powerup failed: No opponent monster detected.");
-		}
+		this.setMomentumTurns(this.getMomentumTurns()+3);
 	}
 	
 	@Override 
