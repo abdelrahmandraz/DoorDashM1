@@ -97,26 +97,43 @@ public class Game {
         
     }
     
-    void playTurn() throws InvalidMoveException { 
-    	if (!getCurrent().isFrozen()) {
+    public void playTurn() throws InvalidMoveException {
+        Monster current = getCurrent();
+
+        if (!current.isFrozen()) {
+            
             int roll = rollDice();
-            board.moveMonster(getCurrent(), roll, getOpponent()); // shouldnt we deal with the invalid move by re throwing the dice ??
-        }														//  also you have to check each turn the winnig condition
-		else getCurrent().setFrozen(false);
+            
+            board.moveMonster(current, roll, getOpponent());
+            
+            if (getWinner()==current) {  
+            	return; // Exit early if the game is over
+            }
+            
+        } else 
+            // Test Requirement: Unfreeze the monster if it was frozen
+            current.setFrozen(false);
+        
         switchTurn();
     }
     
     private boolean checkWinCondition(Monster monster) {
-        return (monster.getPosition() == Constants.WINNING_POSITION) && (monster.getEnergy() >= Constants.WINNING_ENERGY);
+        // Return the result of the check so other methods can use it
+        return monster.getPosition() >= Constants.WINNING_POSITION &&
+                monster.getEnergy() >= Constants.WINNING_ENERGY;
     }
     
     public Monster getWinner() {
         if (checkWinCondition(getCurrent())){
 
-			System.out.println("The winner (of team " + getCurrent().getRole() + ") : \" " + getCurrent().getName() + "\" takes it all " +
-					"! \n" + getOpponent().getName() + " has to fall (u suck!!)");
-			return getCurrent();
-		}
+            System.out.println("The winner (of team " + getCurrent().getRole() + ") : \" " + getCurrent().getName() + "\" takes it all " +
+                    "! \n" + getOpponent().getName() + " has to fall (u suck!!)");
+            return getCurrent();
+        } else if (checkWinCondition(getOpponent())) {
+            System.out.println("The winner (of team " + getOpponent().getRole() + ") : \" " + getOpponent().getName() + "\" takes it all " +
+                    "! \n" + getCurrent().getName() + " has to fall (u suck!!)");
+            return getOpponent();
+        }
         return null;
     }
     

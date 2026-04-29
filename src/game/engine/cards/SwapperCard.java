@@ -24,9 +24,5 @@ public class SwapperCard extends Card {
 	
 	//added
 
-	@Override
-	public Card GetCopy() {
-		return new SwapperCard(this.getName(),this.getDescription(),this.getRarity());
-	}
 	
 }

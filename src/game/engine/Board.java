@@ -141,7 +141,7 @@ public class Board {
 		for(int i=0; i<originalCards.size();i++) {
 
 			for(int j=0;j<originalCards.get(i).getRarity();j++) {
-				ans.add(originalCards.get(i).GetCopy());
+				ans.add(originalCards.get(i));
 			}
 		}
 		originalCards=ans;

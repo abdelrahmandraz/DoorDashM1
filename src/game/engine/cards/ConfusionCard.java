@@ -28,9 +28,5 @@ public class ConfusionCard extends Card {
 		
 	}
 
-	@Override
-	public Card GetCopy() {
-		return new ConfusionCard(this.getName(),this.getDescription(),this.getRarity(),this.duration);
-	}
 
 }

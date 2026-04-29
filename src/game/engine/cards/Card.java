@@ -33,8 +33,5 @@ public abstract class Card {
 	
 	public abstract void performAction(Monster player, Monster opponent);
 	
-	// added
-	
-	public abstract Card GetCopy();
 	
 }

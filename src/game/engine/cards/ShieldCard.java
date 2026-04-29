@@ -18,9 +18,5 @@ public class ShieldCard extends Card {
 		
 	}
 	
-	@Override
-	public Card GetCopy() {
-		return new ShieldCard(this.getName(),this.getDescription(),this.getRarity());
-	}
 
 }

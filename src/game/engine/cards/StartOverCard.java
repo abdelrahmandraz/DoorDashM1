@@ -19,9 +19,5 @@ public class StartOverCard extends Card {
 		
 	}
 	
-	@Override
-	public Card GetCopy() {
-		return new StartOverCard(this.getName(),this.getDescription(),this.getRarity(),this.isLucky());
-	}
 
 }
