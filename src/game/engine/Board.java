@@ -84,46 +84,56 @@ public class Board {
 	}
 	
 	public void initializeBoard(ArrayList<Cell> specialCells) throws IOException {
-		
-		int[] Coordinate;
-		
-		for(int i=1,j=0;i<100;i+=2,j++) { //populates the door cells
-			Coordinate=indexToRowCol(i);
-			boardCells[Coordinate[0]][Coordinate[1]]=specialCells.get(j);
-		}
-		
-		for(int i=0,j=50;i<Constants.CONVEYOR_CELL_INDICES.length;i++,j++){ //populates the conveyer 
-			Coordinate=indexToRowCol(Constants.CONVEYOR_CELL_INDICES[i]);
-			while(!(specialCells.get(j)instanceof ConveyorBelt)) j++;
-			boardCells[Coordinate[0]][Coordinate[1]]=specialCells.get(j);
-			
-		}
-		
-		for(int i=0,j=50;i<Constants.SOCK_CELL_INDICES.length;i++,j++){ //populates the Contamination sock 
-			Coordinate=indexToRowCol(Constants.SOCK_CELL_INDICES[i]);
-			while(!(specialCells.get(j)instanceof ContaminationSock)) j++;
-			boardCells[Coordinate[0]][Coordinate[1]]=specialCells.get(j);
-			
-		}
-		
-		for(int i=0;i<Constants.MONSTER_CELL_INDICES.length;i++){ //populates the stationed Monsters 
-			Coordinate=indexToRowCol(Constants.MONSTER_CELL_INDICES[i]);
-			boardCells[Coordinate[0]][Coordinate[1]]=new MonsterCell(stationedMonsters.get(i).getName(), stationedMonsters.get(i));
-			stationedMonsters.get(i).setPosition(Constants.MONSTER_CELL_INDICES[i]);
-			
-		}
-		
-		for(int i=0;i<Constants.CARD_CELL_INDICES.length;i++){
-			Coordinate=indexToRowCol(Constants.CARD_CELL_INDICES[i]);
-			boardCells[Coordinate[0]][Coordinate[1]]=new CardCell(""+i);
-		}
-		
-		for(int i=0;i<100;i++) {
-			if(getCell(i)==null) setCell(i,new Cell(i+""));
-		}
-		
-		
-		
+	    int[] Coordinate;
+	    int doorlength = 0;
+	    
+	    while(doorlength < specialCells.size() && specialCells.get(doorlength) instanceof DoorCell) {
+	        doorlength++; 
+	    }
+	    
+	    for(int i = 1, j = 0; i < 100 && j < doorlength; i += 2, j++) { 
+	        Coordinate = indexToRowCol(i);
+	        boardCells[Coordinate[0]][Coordinate[1]] = specialCells.get(j);
+	    }
+	    
+	    for(int i = 0, j = doorlength; i < Constants.CONVEYOR_CELL_INDICES.length && j < specialCells.size(); i++){ 
+	        Coordinate = indexToRowCol(Constants.CONVEYOR_CELL_INDICES[i]);
+	        while(j < specialCells.size() && !(specialCells.get(j) instanceof ConveyorBelt)) {
+	            j++;
+	        }
+	        if (j < specialCells.size()) {
+	            boardCells[Coordinate[0]][Coordinate[1]] = specialCells.get(j);
+	            j++; 
+	        }
+	    }
+	    
+	    for(int i = 0, j = doorlength; i < Constants.SOCK_CELL_INDICES.length && j < specialCells.size(); i++){ 
+	        Coordinate = indexToRowCol(Constants.SOCK_CELL_INDICES[i]);
+	        while(j < specialCells.size() && !(specialCells.get(j) instanceof ContaminationSock)) {
+	            j++;
+	        }
+	        if (j < specialCells.size()) {
+	            boardCells[Coordinate[0]][Coordinate[1]] = specialCells.get(j);
+	            j++;
+	        }
+	    }
+	    
+	    for(int i = 0; i < Constants.MONSTER_CELL_INDICES.length && i < stationedMonsters.size(); i++){ 
+	        Coordinate = indexToRowCol(Constants.MONSTER_CELL_INDICES[i]);
+	        boardCells[Coordinate[0]][Coordinate[1]] = new MonsterCell(stationedMonsters.get(i).getName(), stationedMonsters.get(i));
+	        stationedMonsters.get(i).setPosition(Constants.MONSTER_CELL_INDICES[i]);
+	    }
+	    
+	    for(int i = 0; i < Constants.CARD_CELL_INDICES.length; i++){
+	        Coordinate = indexToRowCol(Constants.CARD_CELL_INDICES[i]);
+	        boardCells[Coordinate[0]][Coordinate[1]] = new CardCell("Card Cell " + i);
+	    }
+	    
+	    for(int i = 0; i < 100; i++) {
+	        if(getCell(i) == null) {
+	            setCell(i, new Cell(i + ""));
+	        }
+	    }
 	}
 	
 	private void setCardsByRarity() {
@@ -162,7 +172,7 @@ public class Board {
 		int original_position=currentMonster.getPosition();
 		int startEnergy = currentMonster.getEnergy();
 		boolean currentWasConfused = currentMonster.isConfused();
-	    boolean opponentWasConfused = opponentMonster.isConfused();
+	    //boolean opponentWasConfused = opponentMonster.isConfused();
 		
 		
 		currentMonster.move(roll);
@@ -175,9 +185,10 @@ public class Board {
 			throw new InvalidMoveException("cell already occupied");
 		}
 		
-		if (currentWasConfused) currentMonster.decrementConfusion();
-	    //if (opponentWasConfused) opponentMonster.decrementConfusion();
-		
+		if (currentWasConfused) { 
+			currentMonster.decrementConfusion();
+	    	opponentMonster.decrementConfusion();
+		}
 	    updateMonsterPositions(currentMonster,opponentMonster);
 	}
 	
