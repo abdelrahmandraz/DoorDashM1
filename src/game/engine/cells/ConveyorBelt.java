@@ -9,20 +9,19 @@ public class ConveyorBelt extends TransportCell {
 		super(name, effect);
 	}
 	
-	@Override
+	/*@Override
 	public void transport(Monster monster) {
 		int original_positionOf_monster=monster.getPosition();
-		int Desired_position=original_positionOf_monster+this.getEffect();
-          
+		int Desired_position=original_positionOf_monster+this.getEffect();   
           monster.setPosition(Desired_position);
-	}
+	}*/
 	
 	
-	@Override
+	/*@Override
 	public void onLand(Monster landingMonster, Monster opponentMonster) {
 		super.onLand(landingMonster, opponentMonster);
 		this.transport(landingMonster);
-	}
+	}*/
 	
 	
 }

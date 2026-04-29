@@ -13,12 +13,8 @@ public class ContaminationSock extends TransportCell implements CanisterModifier
 
 	@Override
 	public void transport(Monster monster) {
-		
-		int original_positionOf_monster=monster.getPosition();
-		int Desired_position=original_positionOf_monster+this.getEffect();
-          
-          monster.setPosition(Desired_position);
-          this.modifyCanisterEnergy(monster, Constants.SLIP_PENALTY);
+		super.transport(monster);
+        this.modifyCanisterEnergy(monster,-Constants.SLIP_PENALTY);
 	}
 
 

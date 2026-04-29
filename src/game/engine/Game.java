@@ -32,6 +32,11 @@ public class Game {
 		this.current = player;
 		
 		instance = this;// added this to be able to implement the schemer
+		
+		Board.setStationedMonsters(allMonsters);
+		Board.getStationedMonsters().remove(player);
+		Board.getStationedMonsters().remove(opponent);
+		
 	}
 	
 	public static Game getInstance() {// added this to be able to implement the schemer
@@ -73,7 +78,8 @@ public class Game {
 	// andrew
 	
 	private Monster getCurrentOpponent() {
-        return getOpponent();
+        if(current== player) return opponent;
+        return player;
     }
     
     private int rollDice() {
