@@ -37,6 +37,7 @@ public class Game {
 		Board.getStationedMonsters().remove(player);
 		Board.getStationedMonsters().remove(opponent);
 		
+		this.board.initializeBoard(DataLoader.readCells());
 	}
 	
 	public static Game getInstance() {// added this to be able to implement the schemer

@@ -35,30 +35,35 @@ public class DoorCell extends Cell implements CanisterModifier {
 		this.activated = isActivated;
 	}
 
-	public void onLand(Monster landingMonster, Monster opponentMonster){
+	public void onLand(Monster landingMonster, Monster opponentMonster){		
 		super.onLand(landingMonster, opponentMonster);
-		if(!this.isActivated()){ //IF #1
+		if(this.isActivated()) return; //IF #1
+		
 			ArrayList<Monster> monsters =  Board.getStationedMonsters();
+			
 			if(this.getRole()==landingMonster.getRole()){ // IF #2
 				for(int i=0;i<monsters.size();i++){
-					if(monsters.get(i).getRole()==landingMonster.getRole()) // IF #3
+					if( monsters.get(i) != null && monsters.get(i).getRole()==landingMonster.getRole()) // IF #3
 						this.modifyCanisterEnergy(monsters.get(i), this.getEnergy());
 				}
-				this.modifyCanisterEnergy(landingMonster, this.getEnergy());
-				this.setActivated(true);
+				
+				this.modifyCanisterEnergy(landingMonster, this.getEnergy());				
 			}else{
+				
 				if(landingMonster.isShielded()){ // IF #4
 					landingMonster.setShielded(false);
+					return;
 				}else{
+				
 					for(int i=0;i<monsters.size();i++){
-						if(monsters.get(i).getRole()==landingMonster.getRole()) // IF #3 (YES IT'S THE SAME IF WITH THE SAME FUNCTIONALITY)
-							this.modifyCanisterEnergy(monsters.get(i), -this.getEnergy());
+						if( monsters.get(i) != null && monsters.get(i).getRole()==landingMonster.getRole()) // IF #3 (YES IT'S THE SAME IF WITH THE SAME FUNCTIONALITY)
+							this.modifyCanisterEnergy(monsters.get(i), this.getEnergy());
 					}
-					this.modifyCanisterEnergy(landingMonster, -this.getEnergy());
-					this.setActivated(true);
+					this.modifyCanisterEnergy(landingMonster,this.getEnergy());
 				}
 			}
-		}
+			this.setActivated(true);
+		
 		/* EXPLANATION!!!
 		 *IF #1 makes sure this doorCell is not used up already because if it is then the monster will simply just land.
 		 *IF #2 checks if the team will win or lose energy based on matching the role of the doorCell
@@ -73,7 +78,11 @@ public class DoorCell extends Cell implements CanisterModifier {
 
 	@Override
 	public void modifyCanisterEnergy(Monster monster, int canisterValue) {
-		monster.alterEnergy(canisterValue);
+		if(monster.getRole()==this.role) {
+			monster.alterEnergy(canisterValue);			
+		}else 
+			monster.alterEnergy(-canisterValue);			
+			
 	}
 
 }
