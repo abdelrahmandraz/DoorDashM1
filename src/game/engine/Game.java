@@ -17,6 +17,8 @@ public class Game {
 	private Monster opponent;
 	private Monster current;
 	
+	private int lastRoll = 0; // ADDED FOR GUI TRACKING
+	
 	public Game(Role playerRole) throws IOException {
 		this.board = new Board(DataLoader.readCards());
 		
@@ -57,6 +59,10 @@ public class Game {
 		this.current = current;
 	}
 	
+	public int getLastRoll() {
+		return lastRoll;
+	}
+	
 	private Monster selectRandomMonsterByRole(Role role) {
 		Collections.shuffle(allMonsters);
 	    return allMonsters.stream()
@@ -86,13 +92,14 @@ public class Game {
 		if (current.isFrozen()) {
 			System.out.println(current.getName() + " is frozen! Turn skipped.");
 			current.setFrozen(false);
+			lastRoll = 0; // Frozen, didn't roll
 			switchTurn();
 			return;
 		}
 		
-		int roll = rollDice();
+		lastRoll = rollDice(); // SAVE THE ROLL FOR GUI
 		
-		board.moveMonster(current, roll, getCurrentOpponent());
+		board.moveMonster(current, lastRoll, getCurrentOpponent());
 		
 		switchTurn();
 	}
@@ -115,5 +122,4 @@ public class Game {
 		
 		return null;
 	}
-	
 }

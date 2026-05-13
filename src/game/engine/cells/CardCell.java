@@ -15,6 +15,10 @@ public class CardCell extends Cell {
     	super.onLand(landingMonster, opponentMonster);
     	
         Card card = Board.drawCard();
+        
+        // Notify the Board which card was just drawn so GUI can read it
+        Board.setLastDrawnCard(card);
+        
         card.performAction(landingMonster, opponentMonster);
     }
    
