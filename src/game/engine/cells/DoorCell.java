@@ -1,7 +1,5 @@
 package game.engine.cells;
 
-import java.util.ArrayList;
-
 import game.engine.Board;
 import game.engine.Role;
 import game.engine.interfaces.CanisterModifier;
@@ -11,22 +9,22 @@ public class DoorCell extends Cell implements CanisterModifier {
 	private Role role;
 	private int energy;
 	private boolean activated;
-
+	
 	public DoorCell(String name, Role role, int energy) {
 		super(name);
 		this.role = role;
 		this.energy = energy;
 		this.activated = false;
 	}
-
+	
 	public Role getRole() {
 		return role;
 	}
-
+	
 	public int getEnergy() {
 		return energy;
 	}
-
+	
 	public boolean isActivated() {
 		return activated;
 	}
@@ -35,54 +33,38 @@ public class DoorCell extends Cell implements CanisterModifier {
 		this.activated = isActivated;
 	}
 
-	public void onLand(Monster landingMonster, Monster opponentMonster){		
+	@Override
+	public void onLand(Monster landingMonster, Monster opponentMonster) {
 		super.onLand(landingMonster, opponentMonster);
-		if(this.isActivated()) return; //IF #1
 		
-			ArrayList<Monster> monsters =  Board.getStationedMonsters();
-			
-			if(this.getRole()==landingMonster.getRole()){ // IF #2
-				for(int i=0;i<monsters.size();i++){
-					if( monsters.get(i) != null && monsters.get(i).getRole()==landingMonster.getRole()) // IF #3
-						this.modifyCanisterEnergy(monsters.get(i), this.getEnergy());
-				}
-				
-				this.modifyCanisterEnergy(landingMonster, this.getEnergy());				
-			}else{
-				
-				if(landingMonster.isShielded()){ // IF #4
-					landingMonster.setShielded(false);
-					return;
-				}else{
-				
-					for(int i=0;i<monsters.size();i++){
-						if( monsters.get(i) != null && monsters.get(i).getRole()==landingMonster.getRole()) // IF #3 (YES IT'S THE SAME IF WITH THE SAME FUNCTIONALITY)
-							this.modifyCanisterEnergy(monsters.get(i), this.getEnergy());
-					}
-					this.modifyCanisterEnergy(landingMonster,this.getEnergy());
-				}
+		if(isActivated())
+			return; 
+		
+		System.out.println(landingMonster.getName() + " landed on " + role + " door!");
+		
+		boolean wasShielded = landingMonster.isShielded();
+	     
+		modifyCanisterEnergy(landingMonster, this.energy);
+
+		// Only block if the monster took damage (opposing team) and was shielded
+		if (wasShielded && landingMonster.getRole() != this.role) 
+			return;
+
+	    
+		for (Monster monster : Board.getStationedMonsters()) {
+			//Only affect team members
+			if (monster.getRole() == landingMonster.getRole()) {
+				modifyCanisterEnergy(monster, this.energy);
+				System.out.println("  -> " + monster.getName() + " got " + this.energy + " energy!");
 			}
-			this.setActivated(true);
+		}
 		
-		/* EXPLANATION!!!
-		 *IF #1 makes sure this doorCell is not used up already because if it is then the monster will simply just land.
-		 *IF #2 checks if the team will win or lose energy based on matching the role of the doorCell
-		 *IF #3 makes sure we alter the energy of the landingMonster's team only.
-		 *IF #4 checks the shield status of the landing monster so that we can determine if its team will get penalized or, not. Also the doors don't activate if it's a deduction and the landingMonster has a shield.
-		 *I have assumed .alterEnergy doesn't allow the energy to fall below 0.
-		 *I have assumed stationedMonsters don't include the landingMonster.
-		 *Please see the pic I sent on the group which is a flowchart about the logic of this method. */
-
+		setActivated(true);
 	}
-
 
 	@Override
 	public void modifyCanisterEnergy(Monster monster, int canisterValue) {
-		if(monster.getRole()==this.role) {
-			monster.alterEnergy(canisterValue);			
-		}else 
-			monster.alterEnergy(-canisterValue);			
-			
+		//Affect on team members vary according to role
+		monster.alterEnergy(this.role == monster.getRole() ? canisterValue : -canisterValue);
 	}
-
 }

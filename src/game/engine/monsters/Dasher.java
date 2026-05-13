@@ -20,27 +20,22 @@ public class Dasher extends Monster {
 
 	@Override
 	public void executePowerupEffect(Monster opponentMonster) {
-		this.setMomentumTurns(this.getMomentumTurns()+3);
+		this.setMomentumTurns(3);
+		System.out.println(getName() + " activated Momentum Rush! 3x speed for 3 turns!");
 	}
 	
-	@Override 
+	@Override
 	public void move(int distance) {
-	    int multiplier = 2; // Passive: Moves at 2x the dice roll
+		if (momentumTurns > 0) {
+	        System.out.println(getName() + " using Momentum! (" + momentumTurns + " turns left)");
+	        momentumTurns--;
+	        distance *= 3;
+	    } 
+		
+		else 
+	        distance *= 2;
 	    
-	    // Check if Momentum Rush powerup is active
-	    if (this.getMomentumTurns() > 0) {
-	        multiplier = 3; 
-	        // Decrement using the setter to keep state consistent
-	        this.setMomentumTurns(this.getMomentumTurns() - 1);
-	    }
-	        
-	    int travelDistance = multiplier * distance;
-	    int newPosition = (this.getPosition() + travelDistance) % 100; 
-	    
-	    this.setPosition(newPosition);
+	    super.move(distance);
 	}
-	
-	
-	
 	
 }
